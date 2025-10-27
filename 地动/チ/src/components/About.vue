@@ -13,7 +13,7 @@
       <div class="anime-content">
         <div class="anime-image">
           <div class="image-placeholder">
-            <span>地球の運動</span>
+            <img :src="anime.image" alt="Anime Image" />
           </div>
         </div>
 

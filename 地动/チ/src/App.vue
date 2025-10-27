@@ -4,12 +4,14 @@ import { ref, onMounted, computed, nextTick } from "vue";
 import Home from "./components/Home.vue";
 import About from "./components/About.vue";
 import Character from "./components/Character.vue";
+import Card from "./components/Card.vue";
 
 // create a plain const pages object and derive the SectionKey type from it
 const pages = {
   home: Home,
   about: About,
   characters: Character,
+  card: Card,
 } as const;
 
 type SectionKey = keyof typeof pages;
@@ -28,9 +30,10 @@ const anime = ref({
   author: "魚豊",
   genre: ["科幻", "历史", "剧情"],
   status: "已完结",
+  image: "https://s2.loli.net/2025/10/27/t6FkDq1JQXTU7OA.jpg",
 });
 
-const sections: SectionKey[] = ["home", "about", "characters"];
+const sections: SectionKey[] = ["home", "about", "characters", "card"];
 
 onMounted(() => {
   // 键盘滚动监听
@@ -131,6 +134,14 @@ const scrollToSection = async (sectionId: SectionKey) => {
             >角色</a
           >
         </li>
+        <li>
+          <a
+            href="#card"
+            @click.prevent="scrollToSection('card')"
+            :class="{ active: currentSection === 'card' }"
+            >剧照</a
+          >
+        </li>
       </ul>
     </div>
   </nav>
@@ -154,6 +165,12 @@ const scrollToSection = async (sectionId: SectionKey) => {
       :class="{ active: currentSection === 'characters' }"
       @click="scrollToSection('characters')"
       title="角色"
+    ></div>
+    <div
+      class="scroll-dot"
+      :class="{ active: currentSection === 'card' }"
+      @click="scrollToSection('card')"
+      title="剧照"
     ></div>
   </div>
 
@@ -615,14 +632,27 @@ body {
 .image-placeholder {
   width: 100%;
   height: 400px;
-  background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+  overflow: hidden;
+  /* background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
   border-radius: 15px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 2.5rem;
   color: white;
-  font-family: Georgia, "Times New Roman", Times, serif;
+  font-family: Georgia, "Times New Roman", Times, serif; */
+}
+
+.image-placeholder img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 15px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  transition: all 0.3s ease-in-out;
+  transform: scale(1);
+  opacity: 1;
+  filter: brightness(0.6);
 }
 
 .anime-details {
@@ -671,58 +701,6 @@ body {
 }
 
 /* 角色介绍区域 */
-.characters-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
-  margin-top: 3rem;
-  padding: 0 5rem;
-}
-
-.character-card {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 15px;
-  padding: 2rem;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-}
-
-.character-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-}
-
-.character-avatar {
-  flex-shrink: 0;
-}
-
-.avatar-placeholder {
-  width: 80px;
-  height: 80px;
-  background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-weight: bold;
-  font-size: 1.2rem;
-}
-
-.character-info h3 {
-  color: white;
-  margin-bottom: 0.5rem;
-  font-size: 1.3rem;
-}
-
-.character-desc {
-  color: rgba(255, 255, 255, 0.7);
-  line-height: 1.5;
-}
 
 /* 滚动提示 */
 .scroll-hint {
