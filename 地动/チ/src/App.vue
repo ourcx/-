@@ -1,8 +1,22 @@
 <script setup lang="ts">
 import Default from "./layouts/default.vue";
-import { ref, onMounted } from "vue";
-const currentSection = ref("home");
+import { ref, onMounted, computed, nextTick } from "vue";
+import Home from "./components/Home.vue";
+import About from "./components/About.vue";
+import Character from "./components/Character.vue";
+
+// create a plain const pages object and derive the SectionKey type from it
+const pages = {
+  home: Home,
+  about: About,
+  characters: Character,
+} as const;
+
+type SectionKey = keyof typeof pages;
+const transitionDirection = ref("next"); // "next" 或 "prev"
+const currentSection = ref<SectionKey>("home");
 const isTransitioning = ref(false);
+const currentPageComponent = computed(() => pages[currentSection.value]);
 
 // 单部作品数据
 const anime = ref({
@@ -15,6 +29,8 @@ const anime = ref({
   genre: ["科幻", "历史", "剧情"],
   status: "已完结",
 });
+
+const sections: SectionKey[] = ["home", "about", "characters"];
 
 onMounted(() => {
   // 键盘滚动监听
@@ -35,6 +51,7 @@ const handleKeyDown = (e: KeyboardEvent) => {
     scrollToPrevSection();
   }
 };
+
 const handleWheel = (e: WheelEvent) => {
   if (isTransitioning.value) return;
 
@@ -45,8 +62,8 @@ const handleWheel = (e: WheelEvent) => {
     scrollToPrevSection();
   }
 };
+
 const scrollToNextSection = () => {
-  const sections = ["home", "about", "characters"];
   const currentIndex = sections.indexOf(currentSection.value);
   if (currentIndex < sections.length - 1) {
     scrollToSection(sections[currentIndex + 1]!);
@@ -54,25 +71,31 @@ const scrollToNextSection = () => {
 };
 
 const scrollToPrevSection = () => {
-  const sections = ["home", "about", "characters"];
   const currentIndex = sections.indexOf(currentSection.value);
   if (currentIndex > 0) {
     scrollToSection(sections[currentIndex - 1]!);
   }
 };
 
-const scrollToSection = (sectionId: string) => {
+const scrollToSection = async (sectionId: SectionKey) => {
   if (isTransitioning.value || currentSection.value === sectionId) return;
 
+  const currentIndex = sections.indexOf(currentSection.value);
+  const targetIndex = sections.indexOf(sectionId);
+
+  // 设置过渡方向
+  transitionDirection.value = targetIndex > currentIndex ? "next" : "prev";
+
+  // 开始过渡
   isTransitioning.value = true;
+
+  // 使用 Promise 确保动画完成
+  await new Promise((resolve) => setTimeout(resolve, 600));
+
   currentSection.value = sectionId;
-  setTimeout(() => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: "instant" });
-    }
-    isTransitioning.value = false;
-  }, 300);
+
+  await nextTick();
+  isTransitioning.value = false;
 };
 </script>
 
@@ -81,7 +104,6 @@ const scrollToSection = (sectionId: string) => {
   <nav class="navbar">
     <div class="nav-container">
       <div class="nav-logo">
-        <span>チ</span>
         <span class="nav-title">{{ anime.title }}</span>
       </div>
       <ul class="nav-links">
@@ -136,12 +158,92 @@ const scrollToSection = (sectionId: string) => {
   </div>
 
   <Default>
-    <!-- 路由 -->
-    <router-view></router-view>
+    <div class="page-container">
+      <!-- 使用动态组件切换，避免三个组件同时存在 -->
+      <Transition
+        :name="`page-transition-${transitionDirection}`"
+        mode="out-in"
+        @enter="isTransitioning = true"
+        @after-enter="isTransitioning = false"
+      >
+        <component
+          :is="currentPageComponent"
+          :key="currentSection"
+          :currentSection="currentSection"
+          :scrollToSection="scrollToSection"
+          :anime="anime"
+          :scrollToNextSection="scrollToNextSection"
+          :scrollToPrevSection="scrollToPrevSection"
+          :isTransitioning="isTransitioning"
+        />
+      </Transition>
+    </div>
   </Default>
 </template>
 
 <style scoped>
+/* 页面容器样式 */
+.page-container {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* 页面过渡动画 */
+.page-transition-next-enter-active,
+.page-transition-next-leave-active,
+.page-transition-prev-enter-active,
+.page-transition-prev-leave-active {
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.page-transition-next-enter-from {
+  transform: translateY(100%);
+  opacity: 0;
+}
+
+.page-transition-next-enter-to {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.page-transition-next-leave-from {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.page-transition-next-leave-to {
+  transform: translateY(-100%);
+  opacity: 0;
+}
+
+/* 上一页进入动画 */
+.page-transition-prev-enter-from {
+  transform: translateY(-100%);
+  opacity: 0;
+}
+
+.page-transition-prev-enter-to {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.page-transition-prev-leave-from {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.page-transition-prev-leave-to {
+  transform: translateY(100%);
+  opacity: 0;
+}
+
 /* 导航栏样式 */
 .navbar {
   position: fixed;
@@ -164,7 +266,6 @@ const scrollToSection = (sectionId: string) => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  max-width: 1200px;
   margin: 0 auto;
   padding: 0 2rem;
 }
@@ -210,6 +311,47 @@ const scrollToSection = (sectionId: string) => {
   background: #4ecdc4;
 }
 
+/* 滚动指示器 */
+.scroll-indicator {
+  position: fixed;
+  right: 30px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.scroll-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.scroll-dot.active {
+  background: rgba(255, 255, 255, 0.9);
+  transform: scale(1.2);
+}
+
+.scroll-dot:hover {
+  background: rgba(255, 255, 255, 0.7);
+}
+</style>
+
+<style>
+/* 全局样式 */
+html,
+body {
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
 /* 主视觉区域 */
 .hero-section,
 .about-section,
@@ -221,7 +363,7 @@ const scrollToSection = (sectionId: string) => {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
 }
 
 .hero-section {
@@ -403,7 +545,6 @@ const scrollToSection = (sectionId: string) => {
 .hero-subtitle {
   font-size: 1.2rem;
   color: rgba(255, 255, 255, 0.8);
-  max-width: 600px;
 }
 
 .cta-button {
@@ -426,9 +567,8 @@ const scrollToSection = (sectionId: string) => {
 /* 通用容器 */
 .about-container,
 .characters-container {
-  max-width: 1200px;
   margin: 0 auto;
-  padding: 0 2rem;
+  padding: 0 5rem;
 }
 
 /* 通用部分样式 */
@@ -464,6 +604,7 @@ const scrollToSection = (sectionId: string) => {
   grid-template-columns: 1fr 1fr;
   gap: 4rem;
   align-items: start;
+  padding: 0 5rem;
 }
 
 .anime-image {
@@ -535,6 +676,7 @@ const scrollToSection = (sectionId: string) => {
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 2rem;
   margin-top: 3rem;
+  padding: 0 5rem;
 }
 
 .character-card {
@@ -762,43 +904,5 @@ const scrollToSection = (sectionId: string) => {
   .scroll-indicator {
     display: none;
   }
-}
-</style>
-<style>
-html,
-body {
-  overflow: hidden;
-  margin: 0;
-  padding: 0;
-  height: 100%;
-}
-/* 滚动指示器 */
-.scroll-indicator {
-  position: fixed;
-  right: 30px;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 100;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.scroll-dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.3);
-  transition: all 0.3s ease;
-  cursor: pointer;
-}
-
-.scroll-dot.active {
-  background: rgba(255, 255, 255, 0.9);
-  transform: scale(1.2);
-}
-
-.scroll-dot:hover {
-  background: rgba(255, 255, 255, 0.7);
 }
 </style>
