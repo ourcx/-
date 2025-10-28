@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "motion-v": "^1.7.4",
     "vue": "^3.5.22",
     "vue-audio-wave-zy": "^1.0.0",
     "vue-router": "^4.6.3",

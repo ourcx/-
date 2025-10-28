@@ -14,13 +14,15 @@
         :style="{ '--delay': index * 0.1 + 's' }"
       >
         <div class="more-item-overlay"></div>
-        <div class="more-item-img">
-          <img src="https://s2.loli.net/2025/10/27/t6FkDq1JQXTU7OA.jpg" alt="" />
+        <div class="more-item-img" :style="{ '--bg-image': `url('${item.src}')` }">
+          <img :src="item.src" alt="" />
           <div class="image-overlay"></div>
         </div>
         <div class="more-item-content">
           <div class="more-item-title">{{ item.title }}</div>
-          <div class="more-item-desc">{{ item.description }}</div>
+          <div class="more-item-desc">
+            <div class="text">{{ item.description }}</div>
+          </div>
         </div>
       </div>
     </div>
@@ -34,23 +36,45 @@ const items = ref([
   {
     title: "作品介绍",
     description: "探索这部作品的深度内涵和创作背景",
+    src: "https://s2.loli.net/2025/10/27/t6FkDq1JQXTU7OA.jpg",
   },
   {
     title: "角色解析",
     description: "深入了解每个角色的性格特点和成长历程",
+    src: "https://s2.loli.net/2025/10/28/DPWk3GHxYsaqjmE.jpg",
   },
   {
     title: "艺术风格",
     description: "欣赏独特的视觉艺术和画风特色",
+    src: "https://s2.loli.net/2025/10/27/t6FkDq1JQXTU7OA.jpg",
   },
   {
     title: "幕后故事",
     description: "揭秘创作过程中的趣事和挑战",
+    src: "https://s2.loli.net/2025/10/27/t6FkDq1JQXTU7OA.jpg",
   },
 ]);
 </script>
 
 <style scoped>
+/* .more-item-img::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.6) 0%,
+    rgba(0, 0, 0, 0.3) 30%,
+    rgba(255, 255, 255, 0.3) 60%,
+    rgba(255, 255, 255, 1) 100%
+  );
+  z-index: 10;
+} */
 .more-section {
   height: 100vh;
 }
@@ -99,10 +123,10 @@ const items = ref([
 .more-item:hover {
   transform: translateY(-10px) scale(1.02);
   /* 悬停时的增强阴影 */
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), inset 0 -1px 0 rgba(0, 0, 0, 0.4),
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), inset 0 -1px 0 rgba(0, 0, 0, 0.5),
     0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 40px 50px -12px rgba(0, 0, 0, 0.4),
     0 60px 70px -20px rgba(0, 0, 0, 0.5),
-    /* 悬停发光效果 */ 0 0 20px rgba(78, 205, 196, 0.2), 0 0 0 1px rgba(78, 205, 196, 0.1);
+    /* 悬停发光效果 */ 0 0 20px rgba(78, 205, 196, 0.3), 0 0 0 1px rgba(78, 205, 196, 0.2);
 }
 
 .more-item-img {
@@ -110,6 +134,7 @@ const items = ref([
   width: 100%;
   height: 100%;
   overflow: hidden;
+  transition: all 0.5s ease;
 }
 
 .more-item-img img {
@@ -117,12 +142,50 @@ const items = ref([
   height: 100%;
   object-fit: cover;
   transition: transform 0.5s ease;
+  will-change: transform;
+}
+
+.more-item-img::before {
+  opacity: 1;
+  content: "";
+  position: absolute;
+  width: 150%;
+  height: 40%;
+  right: 0;
+  bottom: 0;
+  top: auto;
+  left: auto;
+  background-image: var(--bg-image, none);
+  background-size: cover;
+  background-position: center;
+  filter: blur(50px);
+  z-index: 10;
+  will-change: filter;
+  transition: opacity 0.5s ease;
+  opacity: 0;
 }
 
 .more-item:hover .more-item-img img {
   transform: scale(1.1);
 }
 
+.more-item:hover .more-item-img::before {
+  opacity: 1;
+  content: "";
+  position: absolute;
+  width: 150%;
+  height: 40%;
+  right: 0;
+  bottom: 0;
+  top: auto;
+  left: auto;
+  background-image: var(--bg-image, none);
+  background-size: cover;
+  background-position: center;
+  filter: blur(50px);
+  z-index: 10;
+  will-change: filter;
+}
 .image-overlay {
   position: absolute;
   top: 0;
@@ -166,6 +229,24 @@ const items = ref([
   line-height: 1.6;
   margin-bottom: 1.5rem;
   font-size: 0.95rem;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.text {
+  position: relative;
+}
+
+.text::after {
+  content: "";
+  position: absolute;
+  bottom: -10px;
+  left: 0;
+  height: 5px;
+  width: 30%;
+  background: linear-gradient(45deg, #4ecdc4, #ff6b6b);
 }
 
 .more-item-btn::before {
