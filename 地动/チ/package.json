@@ -10,7 +10,9 @@
   },
   "dependencies": {
     "vue": "^3.5.22",
-    "vue-router": "^4.6.3"
+    "vue-audio-wave-zy": "^1.0.0",
+    "vue-router": "^4.6.3",
+    "wavesurfer.js": "^7.11.1"
   },
   "devDependencies": {
     "@types/node": "^24.6.0",

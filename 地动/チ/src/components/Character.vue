@@ -131,14 +131,6 @@ const characters = [
     occupation: "学者",
   },
   {
-    name: "艾莉丝",
-    japaneseName: "エリス",
-    avatarText: "エ",
-    description: "勇敢的女助手，暗中支持拉法尔的研究。",
-    age: "24岁",
-    occupation: "研究助手",
-  },
-  {
     name: "托马斯",
     japaneseName: "トーマス",
     avatarText: "ト",

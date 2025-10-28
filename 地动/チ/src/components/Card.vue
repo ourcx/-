@@ -85,6 +85,22 @@ const characters = ref([
     occupation: "审判官",
     description: "宗教裁判所的审判官，坚信地球是宇宙的中心。",
   },
+  {
+    name: "艾莉丝",
+    japaneseName: "エリス",
+    img: "https://s2.loli.net/2025/10/27/wQyMobUzEpaYBGn.png",
+    age: "24岁",
+    occupation: "研究助手",
+    description: "勇敢的女助手，暗中支持拉法尔的研究。",
+  },
+  {
+    name: "托马斯",
+    japaneseName: "トーマス",
+    img: "https://s2.loli.net/2025/10/27/wQyMobUzEpaYBGn.png",
+    age: "45岁",
+    occupation: "审判官",
+    description: "宗教裁判所的审判官，坚信地球是宇宙的中心。",
+  },
 ]);
 interface LogoItem {
   label: string;
@@ -243,6 +259,7 @@ const getBorderStyle = (index: number) => {
   align-items: center;
   justify-content: flex-start;
   position: relative;
+  z-index: 1;
   border: 1px solid rgba(255, 255, 255, 0.1);
   cursor: pointer;
   padding: 0 2rem;
@@ -296,13 +313,13 @@ const getBorderStyle = (index: number) => {
 .card-occupation {
   opacity: 0;
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  font-size: 1rem;
+  font-size: 1.5rem;
   color: white;
   transform: translateX(10rem);
 }
 .character-card:hover .card-occupation {
   opacity: 1;
-  transform: translateX(5rem);
+  transform: translateX(3rem);
 }
 
 .card-japaneseName {
@@ -325,7 +342,7 @@ const getBorderStyle = (index: number) => {
   overflow: hidden;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
   opacity: 0;
-  z-index: 4;
+  z-index: 1000;
   pointer-events: none;
 }
 
@@ -355,7 +372,8 @@ const getBorderStyle = (index: number) => {
   height: 1px;
   margin: 2rem auto 0;
   transition: all 0.3s ease;
-  transform: scaleX(0);
+  transform: scaleY(-50px);
+  background: linear-gradient(90deg, transparent, rgba(78, 205, 196, 0.7), transparent);
   transform-origin: left;
   opacity: 0;
   animation: lineEntrance 0.5s ease-out 0.6s forwards;
@@ -365,6 +383,18 @@ const getBorderStyle = (index: number) => {
   width: 100%;
   height: 100%;
   background: linear-gradient(90deg, transparent, rgba(78, 205, 196, 0.7), transparent);
+}
+
+.characters-line::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 10px;
+  background: linear-gradient(90deg, transparent, rgba(78, 205, 196, 0.7), transparent);
+  animation: lineScroll 5s linear infinite;
+  animation-delay: 0.5s;
 }
 
 @keyframes lineEntrance {

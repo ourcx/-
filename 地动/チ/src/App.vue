@@ -5,6 +5,8 @@ import Home from "./components/Home.vue";
 import About from "./components/About.vue";
 import Character from "./components/Character.vue";
 import Card from "./components/Card.vue";
+import Music from "./components/Music.vue";
+import More from "./components/More.vue";
 
 // create a plain const pages object and derive the SectionKey type from it
 const pages = {
@@ -12,6 +14,8 @@ const pages = {
   about: About,
   characters: Character,
   card: Card,
+  music: Music,
+  more: More,
 } as const;
 
 type SectionKey = keyof typeof pages;
@@ -33,7 +37,7 @@ const anime = ref({
   image: "https://s2.loli.net/2025/10/27/t6FkDq1JQXTU7OA.jpg",
 });
 
-const sections: SectionKey[] = ["home", "about", "characters", "card"];
+const sections: SectionKey[] = ["home", "about", "characters", "card", "music", "more"];
 
 onMounted(() => {
   // 键盘滚动监听
@@ -142,6 +146,22 @@ const scrollToSection = async (sectionId: SectionKey) => {
             >剧照</a
           >
         </li>
+        <li>
+          <a
+            href="#music"
+            @click.prevent="scrollToSection('music')"
+            :class="{ active: currentSection === 'music' }"
+            >唱片</a
+          >
+        </li>
+        <li>
+          <a
+            href="#more"
+            @click.prevent="scrollToSection('more')"
+            :class="{ active: currentSection === 'more' }"
+            >更多</a
+          >
+        </li>
       </ul>
     </div>
   </nav>
@@ -171,6 +191,18 @@ const scrollToSection = async (sectionId: SectionKey) => {
       :class="{ active: currentSection === 'card' }"
       @click="scrollToSection('card')"
       title="剧照"
+    ></div>
+    <div
+      class="scroll-dot"
+      :class="{ active: currentSection === 'music' }"
+      @click="scrollToSection('music')"
+      title="唱片"
+    ></div>
+    <div
+      class="scroll-dot"
+      :class="{ active: currentSection === 'more' }"
+      @click="scrollToSection('more')"
+      title="更多"
     ></div>
   </div>
 
