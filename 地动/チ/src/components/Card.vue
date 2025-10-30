@@ -62,7 +62,7 @@ const characters = ref([
     occupation: "地球是运动还是静止的",
   },
   {
-    name: "诺瓦克",
+    name: "知：科学",
     japaneseName: "ノヴァク",
     img: "https://s2.loli.net/2025/10/27/wQyMobUzEpaYBGn.png",
     age: "62岁",
@@ -70,7 +70,7 @@ const characters = ref([
     description: "经验丰富的老学者，对传统理论持有怀疑态度。",
   },
   {
-    name: "艾莉丝",
+    name: "地：信仰",
     japaneseName: "エリス",
     img: "https://s2.loli.net/2025/10/27/wQyMobUzEpaYBGn.png",
     age: "24岁",
@@ -78,28 +78,20 @@ const characters = ref([
     description: "勇敢的女助手，暗中支持拉法尔的研究。",
   },
   {
-    name: "托马斯",
+    name: "血：殉道",
     japaneseName: "トーマス",
     img: "https://s2.loli.net/2025/10/27/wQyMobUzEpaYBGn.png",
     age: "45岁",
-    occupation: "审判官",
+    occupation: "朝闻道，夕死可矣",
     description: "宗教裁判所的审判官，坚信地球是宇宙的中心。",
   },
   {
-    name: "艾莉丝",
-    japaneseName: "エリス",
-    img: "https://s2.loli.net/2025/10/27/wQyMobUzEpaYBGn.png",
-    age: "24岁",
-    occupation: "研究助手",
-    description: "勇敢的女助手，暗中支持拉法尔的研究。",
-  },
-  {
-    name: "托马斯",
+    name: "感动",
     japaneseName: "トーマス",
     img: "https://s2.loli.net/2025/10/27/wQyMobUzEpaYBGn.png",
     age: "45岁",
-    occupation: "审判官",
-    description: "宗教裁判所的审判官，坚信地球是宇宙的中心。",
+    occupation: "颠覆世界，相遇的奇迹",
+    description: "",
   },
 ]);
 interface LogoItem {

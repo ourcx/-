@@ -31,15 +31,23 @@ const anime = ref({
   title: "チ。-关于地球的运动-",
   japaneseTitle: "チ。―地球の運動について―",
   description:
-    "这是一部关于天文学和人类探索宇宙真理的深刻作品，讲述了在宗教与科学冲突的时代，人们为了真理不惜牺牲一切的故事。作品以精美的画风和深刻的思想内涵赢得了广泛好评。",
-  year: "2022",
-  author: "魚豊",
+    "标题中的“チ”（ち）有大地（地（ち））、血液（血（ち））和知识（知（ち））的意思。表示句子停止的句号“。”在此处代表了“大地的停止状态”。而封面标志中在“。”上加入了地球运动的轨迹，静止状态的地球又变成了运动的状态，合起来就是“地球是运动的还是静止的呢？”的意思",
+  year: "2020",
+  author: "鱼丰",
   genre: ["科幻", "历史", "剧情"],
   status: "已完结",
   image: "https://s2.loli.net/2025/10/27/t6FkDq1JQXTU7OA.jpg",
 });
 
-const sections: SectionKey[] = ["home", "about", "characters", "card", "music", "more", "end"];
+const sections: SectionKey[] = [
+  "home",
+  "about",
+  "characters",
+  "card",
+  "music",
+  "more",
+  "end",
+];
 
 onMounted(() => {
   // 键盘滚动监听
@@ -164,7 +172,7 @@ const scrollToSection = async (sectionId: SectionKey) => {
             >更多</a
           >
         </li>
-         <li>
+        <li>
           <a
             href="#end"
             @click.prevent="scrollToSection('end')"
@@ -214,7 +222,7 @@ const scrollToSection = async (sectionId: SectionKey) => {
       @click="scrollToSection('more')"
       title="更多"
     ></div>
-     <div
+    <div
       class="scroll-dot"
       :class="{ active: currentSection === 'end' }"
       @click="scrollToSection('end')"

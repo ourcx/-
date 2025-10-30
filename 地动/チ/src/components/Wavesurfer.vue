@@ -11,7 +11,7 @@
         </div>
         <div class="cover-image">
           <div class="cover-placeholder">
-            <span>チ</span>
+            <span>{{ currentTrack?.name?.charAt(0) || "♪" }}</span>
           </div>
         </div>
       </div>
@@ -19,8 +19,8 @@
       <!-- 播放控制 -->
       <div class="player-controls">
         <div class="track-info">
-          <h3 class="track-title">{{ currentTrack!.title }}</h3>
-          <p class="track-artist">{{ currentTrack!.artist }}</p>
+          <h3 class="track-title">{{ currentTrack?.title || currentTrack?.name }}</h3>
+          <p class="track-artist">{{ currentTrack?.artist || "Unknown Artist" }}</p>
         </div>
 
         <div class="progress-container">
@@ -29,12 +29,12 @@
           </div>
           <div class="time-display">
             <span>{{ formatTime(currentTime) }}</span>
-            <span>{{ formatTime(duration) }}</span>
+            <span>{{ currentTrack?.duration || "0:00" }}</span>
           </div>
         </div>
 
         <div class="control-buttons">
-          <button class="control-btn" @click="previousTrack">
+          <button class="control-btn" @click="previousTrack" :disabled="!canGoPrevious">
             <svg viewBox="0 0 24 24" width="20" height="20">
               <path fill="currentColor" d="M6 6h2v12H6zm3.5 6l8.5 6V6z" />
             </svg>
@@ -49,7 +49,7 @@
             </svg>
           </button>
 
-          <button class="control-btn" @click="nextTrack">
+          <button class="control-btn" @click="nextTrack" :disabled="!canGoNext">
             <svg viewBox="0 0 24 24" width="20" height="20">
               <path fill="currentColor" d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" />
             </svg>
@@ -95,7 +95,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, onMounted, onUnmounted, watch, computed } from "vue";
+import type { P, Track } from "../types/inte";
+
+// 定义事件
+const emit = defineEmits<{
+  "play-state-change": [playing: boolean];
+  "track-change": [trackId: number];
+  "time-update": [data: { trackId: number; currentTime: number }];
+}>();
 
 // 音频状态
 const isPlaying = ref(false);
@@ -104,34 +112,92 @@ const currentTime = ref(0);
 const duration = ref(0);
 const progress = ref(0);
 const volume = ref(0.7);
+const isLoading = ref(false);
+const props = defineProps<P & { isPlaying?: boolean }>();
+
+// 计算属性
+const currentTrack = computed(() => props.cur);
+const canGoPrevious = computed(() => currentTrack.value && currentTrack.value.id > 1);
+const canGoNext = computed(() => currentTrack.value && currentTrack.value.id < 5);
 
 // 音频元素引用
 const audioElement = ref<HTMLAudioElement | null>(null);
 
-// 播放列表
-const playlist = ref([
-  {
-    id: 1,
-    title: "怪兽",
-    artist: "鱼韵",
-    src: "/audio/track1.mp3",
-  },
-  {
-    id: 2,
-    title: "星の軌跡",
-    artist: "アニメサウンドトラック",
-    src: "/audio/track2.mp3",
-  },
-  {
-    id: 3,
-    title: "宇宙のリズム",
-    artist: "コズミックサウンド",
-    src: "/audio/track3.mp3",
-  },
-]);
+// 监听父组件的播放状态
+watch(
+  () => props.isPlaying,
+  (newVal) => {
+    if (newVal !== undefined && newVal !== isPlaying.value) {
+      togglePlay();
+    }
+  }
+);
 
-const currentTrackIndex = ref(0);
-const currentTrack = ref(playlist.value[0]);
+const loadTrack = async (track: Track) => {
+  if (!track.src) {
+    console.error("没有音频源:", track);
+    return;
+  }
+
+  if (audioElement.value) {
+    // 先暂停当前播放
+    audioElement.value.pause();
+
+    // 设置新的音频源
+    audioElement.value.src = track.src;
+
+    // 重置状态
+    currentTime.value = 0;
+    progress.value = 0;
+
+    // 加载音频
+    audioElement.value.load();
+
+    console.log("音频加载成功:", track.src);
+
+    // 如果父组件要求播放，则开始播放
+    if (props.isPlaying) {
+      playAudio();
+    }
+  }
+};
+
+// 监听当前曲目变化
+watch(
+  () => props.cur,
+  (newTrack) => {
+    if (newTrack) {
+      loadTrack(newTrack);
+      emit("track-change", newTrack.id);
+    }
+  },
+  { immediate: true }
+);
+
+// 播放音频
+const playAudio = () => {
+  if (audioElement.value) {
+    console.log("开始播放音频:", audioElement.value);
+    audioElement.value
+      .play()
+      .then(() => {
+        isPlaying.value = true;
+        emit("play-state-change", true);
+      })
+      .catch((error) => {
+        console.error("播放失败:", error);
+      });
+  }
+};
+
+// 暂停音频
+const pauseAudio = () => {
+  if (audioElement.value) {
+    audioElement.value.pause();
+    isPlaying.value = false;
+    emit("play-state-change", false);
+  }
+};
 
 // 初始化音频
 onMounted(() => {
@@ -143,8 +209,18 @@ onMounted(() => {
   });
 
   audioElement.value.addEventListener("timeupdate", () => {
-    currentTime.value = audioElement.value!.currentTime;
-    progress.value = (currentTime.value / duration.value) * 100;
+    if (audioElement.value) {
+      currentTime.value = audioElement.value.currentTime;
+      progress.value = (currentTime.value / duration.value) * 100;
+
+      // 发送时间更新事件
+      if (currentTrack.value) {
+        emit("time-update", {
+          trackId: currentTrack.value.id,
+          currentTime: currentTime.value,
+        });
+      }
+    }
   });
 
   audioElement.value.addEventListener("ended", () => {
@@ -152,7 +228,9 @@ onMounted(() => {
   });
 
   // 设置第一首曲目
-  loadTrack(currentTrackIndex.value);
+  if (currentTrack.value) {
+    loadTrack(currentTrack.value);
+  }
 });
 
 onUnmounted(() => {
@@ -162,49 +240,34 @@ onUnmounted(() => {
   }
 });
 
-// 加载曲目
-const loadTrack = (index: number) => {
-  if (audioElement.value) {
-    audioElement.value.src = playlist.value[index]!.src;
-    audioElement.value.load();
-    currentTrack.value = playlist.value[index];
-  }
-};
-
 // 播放/暂停
 const togglePlay = () => {
-  if (!audioElement.value) return;
+  if (!audioElement.value || !currentTrack.value) return;
 
   if (isPlaying.value) {
-    audioElement.value.pause();
+    pauseAudio();
   } else {
-    audioElement.value.play();
+    playAudio();
   }
-  isPlaying.value = !isPlaying.value;
 };
 
 // 下一曲
 const nextTrack = () => {
-  currentTrackIndex.value = (currentTrackIndex.value + 1) % playlist.value.length;
-  loadTrack(currentTrackIndex.value);
-  if (isPlaying.value) {
-    audioElement.value?.play();
+  if (canGoNext.value && currentTrack.value) {
+    emit("track-change", currentTrack.value.id + 1);
   }
 };
 
 // 上一曲
 const previousTrack = () => {
-  currentTrackIndex.value =
-    (currentTrackIndex.value - 1 + playlist.value.length) % playlist.value.length;
-  loadTrack(currentTrackIndex.value);
-  if (isPlaying.value) {
-    audioElement.value?.play();
+  if (canGoPrevious.value && currentTrack.value) {
+    emit("track-change", currentTrack.value.id - 1);
   }
 };
 
 // 进度条点击
 const seekAudio = (event: MouseEvent) => {
-  if (!audioElement.value) return;
+  if (!audioElement.value || !duration.value) return;
 
   const progressBar = event.currentTarget as HTMLElement;
   const clickPosition = event.offsetX;
@@ -212,6 +275,7 @@ const seekAudio = (event: MouseEvent) => {
   const seekTime = (clickPosition / progressBarWidth) * duration.value;
 
   audioElement.value.currentTime = seekTime;
+  currentTime.value = seekTime;
 };
 
 // 音量控制
@@ -501,5 +565,15 @@ const formatTime = (time: number) => {
   .player-controls {
     width: 200px;
   }
+}
+
+.control-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.control-btn:disabled:hover {
+  background: transparent;
+  transform: none;
 }
 </style>

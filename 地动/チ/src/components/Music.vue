@@ -40,7 +40,14 @@
 
       <!-- 右侧波形图区域 -->
       <div class="wavesurfer-section">
-        <wavesurfer ref="wavesurferRef"></wavesurfer>
+        <wavesurfer
+          ref="wavesurferRef"
+          :cur="currentTrack!"
+          :is-playing="isPlaying"
+          @play-state-change="handlePlayStateChange"
+          @track-change="handleTrackChange"
+          @time-update="handleTimeUpdate"
+        ></wavesurfer>
       </div>
 
       <div class="playlist">
@@ -90,13 +97,14 @@
 
 <script setup lang="ts">
 //@ts-ignore
+import type { Track } from "../types/inte";
 import Wavesurfer from "./Wavesurfer.vue";
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, onMounted, onUnmounted, computed } from "vue";
 const isPlaying = ref(false);
 const currentTrackIndex = ref(0);
 const wavesurferRef = ref();
 const particleCount = 30;
-
+const currentTrackTimes = ref<number[]>([]);
 // 粒子样式
 const particleStyle = (index: number) => {
   const size = Math.random() * 4 + 1;
@@ -114,13 +122,19 @@ const particleStyle = (index: number) => {
     top: `${Math.random() * 100}%`,
   };
 };
-const playlist = ref([
-  { id: 1, name: "地球の運動 - メインテーマ", duration: "4:32" },
-  { id: 2, name: "星の軌跡", duration: "3:45" },
-  { id: 3, name: "宇宙のリズム", duration: "5:12" },
-  { id: 4, name: "時間の流れ", duration: "4:18" },
-  { id: 5, name: "無限の可能性", duration: "6:07" },
+const currentTrack = computed(() => playlist.value[currentTrackIndex.value]);
+const playlist = ref<Track[]>([
+  {
+    id: 1,
+    name: "怪兽",
+    title: "怪兽",
+    artist: "鱼韵",
+    src: "/audio/怪兽.mp3",
+    duration: "4:32",
+    durationInSeconds: 272,
+  },
 ]);
+
 // 音频可视化条样式
 const barStyle = (index: number) => {
   const height = Math.random() * 60 + 20;
@@ -133,10 +147,42 @@ const barStyle = (index: number) => {
 };
 
 const playTrack = (index: number) => {
-  currentTrackIndex.value = index;
-  isPlaying.value = true;
-  // 播放指定曲目逻辑
+  if (index >= 0 && index < playlist.value.length) {
+    currentTrackIndex.value = index;
+    isPlaying.value = true;
+  }
 };
+
+const handlePlayStateChange = (isPlay: boolean) => {
+  isPlaying.value = isPlay;
+};
+
+// 处理曲目变化
+const handleTrackChange = (trackId: number) => {
+  const index = playlist.value.findIndex((track) => track.id === trackId);
+  if (index !== -1) {
+    currentTrackIndex.value = index;
+  }
+};
+
+// 处理时间更新
+const handleTimeUpdate = (data: { trackId: number; currentTime: number }) => {
+  const index = playlist.value.findIndex((track) => track.id === data.trackId);
+  if (index !== -1) {
+    currentTrackTimes.value[index] = data.currentTime;
+  }
+};
+
+// 格式化时间
+const formatTime = (seconds: number) => {
+  const mins = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
+  return `${mins}:${secs.toString().padStart(2, "0")}`;
+};
+
+onMounted(() => {
+  currentTrackTimes.value = new Array(playlist.value.length).fill(0);
+});
 </script>
 
 <style scoped>
@@ -491,6 +537,7 @@ const playTrack = (index: number) => {
   border-radius: 15px;
   padding: 1.5rem;
   border: 1px solid rgba(255, 255, 255, 0.1);
+  width: 100%;
 }
 
 .playlist-title {

@@ -28,7 +28,19 @@
       <!-- 右侧：BounceCards -->
       <div class="bento-section">
         <div class="cards-container">
-          <ShinyText :text="text" :speed="10" />
+          <ShinyText :text="text" :speed="11" />
+          <br />
+          <ShinyText :text="textMusic" :speed="12" />
+          <br />
+          <ShinyText :text="textMain" :speed="13" />
+          <br />
+          <ShinyText text="？" :speed="14" />
+          <br />
+          <ShinyText :text="text1" :speed="15" />
+          <br />
+          <ShinyText :text="text2" :speed="16" />
+          <br />
+          <ShinyText :text="text3" :speed="17" />
         </div>
       </div>
     </div>
@@ -41,6 +53,16 @@ import Galaxy from "../blocks/Backgrounds/Galaxy/Galaxy.vue";
 import ShinyText from "../blocks/TextAnimations/ShinyText/ShinyText.vue";
 const text =
   "上帝创造了这个世界，而人类渴望了解世界，我不知道还有哪种欲望比求知欲更高洁。只要能通晓这世间的一切，我愿意付出任何代价。认为知识必须服务于人类以及社会的观点本身就是垃圾。因为渴望了解，所以不断探索，仅此而已。探索真理的路上最为重要的一点是信任，相信自己的直觉，相信世界的美好。无论发生什么事，我都不会否定你的好奇心。";
+const textMusic = `诚然，脚下的“大地”肮脏且缺乏秩序，距离那片高贵而完美的“天空”遥不可及。但是这不就意味着我们可以亲眼见证“完美”吗？人可以认知完美，地球就是完美的观测特等席`;
+const textMain = `我也不清楚究竟要献上什么才能通晓世界的全貌，不过可以肯定一点，隐匿所知和排除异己都是没用的。我们并不完美，所以才能互相补足。不这么做就无法探索这个世界，人类“是一种社会的动物”。我也感受到了惊奇，我会一直肯定这份惊异与好奇，我要用另一种方式，在怀疑中前行，在笃信中归来。
+千言万语汇成一个标点符号：
+“？”`;
+
+const text1 = `1468年，
+23岁的阿尔伯特进入克拉科夫大学求学随后，他在克拉科夫执教了20年主要教授的科目为数学和自然哲学:
+在课上，他曾对当时主流的天动说表示怀疑但并没有提出过明确的结论。`;
+const text2 = `1482年，他为当时的天文学教科书《新行星论》"编写了注释书,该书同样是当时各所大学中广泛学习的教材。`;
+const text3 = `1491年，一位就读于克拉科夫大学的青年学生通过阿尔伯特编写的注释书学习天文学。这位青年，名为哥白尼。`;
 </script>
 
 <style scoped>
@@ -121,6 +143,7 @@ const text =
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
   padding: 20px;
 }
 

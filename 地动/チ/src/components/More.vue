@@ -34,24 +34,24 @@ import { ref } from "vue";
 import Date from "./Date.vue";
 const items = ref([
   {
-    title: "作品介绍",
+    title: "探索作品",
     description: "探索这部作品的深度内涵和创作背景",
     src: "https://s2.loli.net/2025/10/27/t6FkDq1JQXTU7OA.jpg",
   },
   {
     title: "角色解析",
-    description: "深入了解每个角色的性格特点和成长历程",
+    description: "这是一代代人的故事",
     src: "https://s2.loli.net/2025/10/28/DPWk3GHxYsaqjmE.jpg",
   },
   {
     title: "艺术风格",
     description: "欣赏独特的视觉艺术和画风特色",
-    src: "https://s2.loli.net/2025/10/27/t6FkDq1JQXTU7OA.jpg",
+    src: "https://s2.loli.net/2025/10/29/fKs2a1Q68cvkDAw.jpg",
   },
   {
-    title: "幕后故事",
-    description: "揭秘创作过程中的趣事和挑战",
-    src: "https://s2.loli.net/2025/10/27/t6FkDq1JQXTU7OA.jpg",
+    title: "背景故事",
+    description: "在十七世纪的欧洲发生的种种",
+    src: "https://s2.loli.net/2025/10/29/ciMaPKrukydYE2I.jpg",
   },
 ]);
 </script>
@@ -162,7 +162,7 @@ const items = ref([
   z-index: 10;
   will-change: filter;
   transition: opacity 0.5s ease;
-  opacity: 0;
+  opacity: 0.6;
 }
 
 .more-item:hover .more-item-img img {

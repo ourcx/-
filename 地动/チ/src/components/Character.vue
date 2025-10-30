@@ -8,12 +8,12 @@
       <div class="characters-left">
         <div class="section-header">
           <h2 class="section-title">角色介绍</h2>
-          <p class="section-subtitle">探索故事中的核心人物</p>
+          <p class="section-subtitles">探索故事中的核心人物</p>
         </div>
 
         <div class="characters-description">
           <p>
-            这部作品描绘了一群勇敢追求真理的角色，他们在宗教与科学的冲突中展现出人性的光辉与复杂。
+            知晓星空后为他们所知晓的真理投向死亡或形同死亡的残酷，不是为了单单描写"知"的代价，而是在星空与烈火中探寻蛇鳞与巫山那般，只在见过以后才毅然抛却无知之美、纵身投入星空之真实的美丽
           </p>
         </div>
 
@@ -24,10 +24,14 @@
               v-for="(character, index) in characters"
               :key="index"
               :style="{ '--card-index': index }"
+              :class="{ selected: selectedCharacterIndex === index }"
+              @click="selectCharacter(index)"
             >
               <div class="character-avatar">
                 <div class="avatar-placeholder">
-                  <span class="avatar-text">{{ character.avatarText }}</span>
+                  <span class="avatar-text">
+                    <img :src="character.avatarText" :alt="character.name" />
+                  </span>
                 </div>
                 <div class="character-glow"></div>
               </div>
@@ -79,11 +83,19 @@
       <div class="characters-right">
         <div class="character-showcase">
           <div class="showcase-bg"></div>
-          <div class="showcase-content">
+          <div class="showcase-content" v-if="selectedCharacter">
+            <div class="selected-character-avatar">
+              <img :src="selectedCharacter.avatarText" :alt="selectedCharacter.name" />
+            </div>
+          </div>
+          <div class="showcase-content default-content" v-else>
             <h3 class="showcase-title">角色深度解析</h3>
             <p class="showcase-text">
               每个角色都承载着特定的历史背景与思想冲突，他们的选择与命运交织成这部作品的灵魂。
             </p>
+            <div class="selection-hint">
+              <p>点击左侧角色卡片查看详细信息</p>
+            </div>
           </div>
         </div>
       </div>
@@ -97,7 +109,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 
 interface Props {
   currentSection: string;
@@ -111,58 +123,94 @@ const props = withDefaults(defineProps<Props>(), {
 
 // 当前显示的卡片索引
 const currentCardIndex = ref(0);
+// 选中的角色索引
+const selectedCharacterIndex = ref<number | null>(null);
 
 // 角色数据
 const characters = [
   {
     name: "拉法尔",
     japaneseName: "ラファウ",
-    avatarText: "ラ",
-    description: "年轻的天文学者，为了证明地球运动理论不惜挑战宗教权威。",
-    age: "28岁",
+    avatarText: "https://s2.loli.net/2025/10/28/dPQBX8FlzSxEkgJ.png",
+    description:
+      "凭借始终如一的合理判断，顺利地在社会中左右逢源，但却被地动说的美丽之处所吸引，并开始了研究",
+    age: "12岁",
     occupation: "天文学者",
   },
   {
     name: "诺瓦克",
     japaneseName: "ノヴァク",
-    avatarText: "ノ",
-    description: "经验丰富的老学者，对传统理论持有怀疑态度。",
+    avatarText: "https://s2.loli.net/2025/10/28/txJK3DNYO987Vkz.png",
+    description:
+      "虽然并没有特别的思想，但为了保护女儿以及这个世界的平静，他愿意无所顾忌地做任何残酷的事情",
     age: "62岁",
-    occupation: "学者",
+    occupation: "异端审问官",
   },
   {
-    name: "托马斯",
+    name: "休伯特",
     japaneseName: "トーマス",
-    avatarText: "ト",
-    description: "宗教裁判所的审判官，坚信地球是宇宙的中心。",
+    avatarText: "https://s2.loli.net/2025/10/28/la7HeAd6Q4BXRVw.png",
+    description: "拉法尔的义父波特茨基的熟人，因被禁止的研究而被幽禁的异端者",
     age: "45岁",
-    occupation: "审判官",
+    occupation: "异端",
   },
   {
-    name: "米开朗基罗",
+    name: "奥科吉",
     japaneseName: "ミケランジェロ",
-    avatarText: "ミ",
-    description: "艺术家，通过绘画表达对宇宙的思考。",
+    avatarText: "https://s2.loli.net/2025/10/28/Fn1MDRBxo2K4ezs.png",
+    description:
+      "拥有卓越的视力，却害怕看天空。极度消极，对这个世界没有任何期望，只想尽快去天堂",
     age: "38岁",
-    occupation: "艺术家",
+    occupation: "雇佣兵",
   },
   {
-    name: "卡洛斯·巴特勒",
+    name: "巴德尼",
     japaneseName: "カルロス・バトレ",
-    avatarText: "カ",
-    description: "音乐家，对宇宙的思考和音乐有独到的见解。",
+    avatarText: "https://s2.loli.net/2025/10/28/4qXDEUTowlxRHrG.png",
+    description:
+      "为了追求人生至高的瞬间，不遵守教会的规定，纯粹地追求知识，结果眼睛被灼伤，贬到了乡下的村庄",
     age: "42岁",
-    occupation: "音乐家",
+    occupation: "修道士",
   },
   {
-    name: "伊莎贝拉",
+    name: "约兰达",
     japaneseName: "イザベラ",
-    avatarText: "イ",
-    description: "贵族女性，资助科学研究但面临社会压力。",
+    avatarText: "https://s2.loli.net/2025/10/28/gXyd8hpMr1i3fqc.png",
+    description:
+      "虽然进入了宇宙学大师的研究所，但却因为是女性而无法充分地进行研究，感到非常绝望",
     age: "32岁",
-    occupation: "贵族",
+    occupation: "天文研究助手",
+  },
+  {
+    name: "杜拉卡",
+    japaneseName: "ドルカ",
+    avatarText: "https://s2.loli.net/2025/10/28/NWT8FJe7KmLQhI4.png",
+    description:
+      "对村子发展做出巨大贡献的才女，从小失去父亲的经历，让她有赚钱赚到不安消失为止的信念",
+    age: "28岁",
+    occupation: "移动民族的女孩",
+  },
+  {
+    name: "施密特",
+    japaneseName: "シミツ",
+    avatarText: "https://s2.loli.net/2025/10/28/wVBriSKdUFNhznZ.png",
+    description: "想让被人伦玷污的上帝复活的自然主义者。目前正在为削弱C教正统派而活动着",
+    age: "35岁",
+    occupation: "异端解放部队的队长",
   },
 ];
+
+// 计算选中的角色
+const selectedCharacter = computed(() => {
+  return selectedCharacterIndex.value !== null
+    ? characters[selectedCharacterIndex.value]
+    : null;
+});
+
+// 选择角色
+const selectCharacter = (index: number) => {
+  selectedCharacterIndex.value = index;
+};
 
 // 左右滚动函数
 const scrollLeft = () => {
@@ -245,10 +293,6 @@ onMounted(() => {
   height: 100%;
 }
 
-.section-header {
-  margin-bottom: 2rem;
-}
-
 .section-title {
   font-size: 3rem;
   color: white;
@@ -261,15 +305,12 @@ onMounted(() => {
   background-clip: text;
 }
 
-.section-subtitle {
-  font-size: 1.2rem;
+.section-subtitles {
   color: rgba(255, 255, 255, 0.7);
-  margin-bottom: 1rem;
 }
 
 .characters-description p {
   color: rgba(255, 255, 255, 0.8);
-  line-height: 1.6;
   font-size: 1.1rem;
 }
 
@@ -338,6 +379,13 @@ onMounted(() => {
   max-width: 250px;
   height: 350px;
   flex-shrink: 0;
+  cursor: pointer;
+}
+
+.character-card.selected {
+  border-color: rgba(78, 205, 196, 0.8);
+  box-shadow: 0 0 20px rgba(78, 205, 196, 0.4);
+  transform: translateY(-5px);
 }
 
 @keyframes cardEntrance {
@@ -395,6 +443,7 @@ onMounted(() => {
   position: relative;
   z-index: 2;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
 }
 
 .character-glow {
@@ -569,6 +618,17 @@ onMounted(() => {
   text-align: center;
   padding: 2rem;
   max-width: 80%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.default-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .showcase-title {
@@ -582,6 +642,27 @@ onMounted(() => {
   color: rgba(255, 255, 255, 0.8);
   line-height: 1.6;
   font-size: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.selection-hint {
+  color: rgba(255, 255, 255, 0.6);
+  font-style: italic;
+  font-size: 0.9rem;
+}
+
+/* 选中的角色详情样式 */
+.selected-character-avatar {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.selected-character-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
 }
 
 /* 底部基座 */
@@ -661,25 +742,9 @@ onMounted(() => {
   }
 }
 
-/* 响应式设计 */
-@media (max-width: 1024px) {
-  .characters-container {
-    grid-template-columns: 1fr;
-    gap: 2rem;
-  }
-
-  .characters-right {
-    display: none;
-  }
-}
-
 @media (max-width: 768px) {
   .characters-container {
     width: 95%;
-  }
-
-  .section-title {
-    font-size: 2.5rem;
   }
 
   .character-card {
@@ -722,5 +787,18 @@ onMounted(() => {
     width: 35px;
     height: 35px;
   }
+}
+
+.avatar-text {
+  position: relative;
+  overflow: hidden;
+}
+
+.avatar-text img {
+  width: 100%;
+  transform: translateY(25%) translateX(10%);
+  object-fit: cover;
+  object-position: center;
+  border-radius: 50%;
 }
 </style>
