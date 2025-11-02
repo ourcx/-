@@ -11,7 +11,8 @@
         </div>
         <div class="cover-image">
           <div class="cover-placeholder">
-            <span>{{ currentTrack?.name?.charAt(0) || "♪" }}</span>
+            <!-- <span>{{ currentTrack?.name?.charAt(0) || "♪" }}</span> -->
+            <img src="https://s2.loli.net/2025/10/27/lYNDRduo64wGnHq.jpg" alt="" />
           </div>
         </div>
       </div>
@@ -23,39 +24,40 @@
           <p class="track-artist">{{ currentTrack?.artist || "Unknown Artist" }}</p>
         </div>
 
-        <div class="progress-container">
-          <div class="progress-bar" @click="seekAudio">
-            <div class="progress" :style="{ width: progress + '%' }"></div>
+        <div>
+          <div class="progress-container">
+            <div class="progress-bar" @click="seekAudio">
+              <div class="progress" :style="{ width: progress + '%' }"></div>
+            </div>
+            <div class="time-display">
+              <span>{{ formatTime(currentTime) }}</span>
+              <span>{{ currentTrack?.duration || "0:00" }}</span>
+            </div>
           </div>
-          <div class="time-display">
-            <span>{{ formatTime(currentTime) }}</span>
-            <span>{{ currentTrack?.duration || "0:00" }}</span>
+
+          <div class="control-buttons">
+            <button class="control-btn" @click="previousTrack" :disabled="!canGoPrevious">
+              <svg viewBox="0 0 24 24" width="20" height="20">
+                <path fill="currentColor" d="M6 6h2v12H6zm3.5 6l8.5 6V6z" />
+              </svg>
+            </button>
+
+            <button class="play-btn" @click="togglePlay">
+              <svg v-if="!isPlaying" viewBox="0 0 24 24" width="24" height="24">
+                <path fill="currentColor" d="M8 5v14l11-7z" />
+              </svg>
+              <svg v-else viewBox="0 0 24 24" width="24" height="24">
+                <path fill="currentColor" d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+              </svg>
+            </button>
+
+            <button class="control-btn" @click="nextTrack" :disabled="!canGoNext">
+              <svg viewBox="0 0 24 24" width="20" height="20">
+                <path fill="currentColor" d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" />
+              </svg>
+            </button>
           </div>
         </div>
-
-        <div class="control-buttons">
-          <button class="control-btn" @click="previousTrack" :disabled="!canGoPrevious">
-            <svg viewBox="0 0 24 24" width="20" height="20">
-              <path fill="currentColor" d="M6 6h2v12H6zm3.5 6l8.5 6V6z" />
-            </svg>
-          </button>
-
-          <button class="play-btn" @click="togglePlay">
-            <svg v-if="!isPlaying" viewBox="0 0 24 24" width="24" height="24">
-              <path fill="currentColor" d="M8 5v14l11-7z" />
-            </svg>
-            <svg v-else viewBox="0 0 24 24" width="24" height="24">
-              <path fill="currentColor" d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
-            </svg>
-          </button>
-
-          <button class="control-btn" @click="nextTrack" :disabled="!canGoNext">
-            <svg viewBox="0 0 24 24" width="20" height="20">
-              <path fill="currentColor" d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" />
-            </svg>
-          </button>
-        </div>
-
         <div class="volume-control">
           <button class="volume-btn" @click="toggleMute">
             <svg
@@ -329,9 +331,12 @@ const formatTime = (time: number) => {
 
 /* 唱片样式 */
 .album-cover {
-  position: relative;
-  width: 150px;
-  height: 150px;
+  position: absolute;
+  width: 60vh;
+  height: 60vh;
+  top: 50%;
+  left: 37%;
+  transform: translate(-50%, -50%);
   border-radius: 50%;
   background: linear-gradient(45deg, #1a1a1a, #2d2d2d);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
@@ -339,6 +344,7 @@ const formatTime = (time: number) => {
   align-items: center;
   justify-content: center;
   transition: transform 0.3s ease;
+  z-index: 1;
 }
 
 .album-cover.rotating {
@@ -347,10 +353,10 @@ const formatTime = (time: number) => {
 
 @keyframes rotate {
   from {
-    transform: rotate(0deg);
+    transform: translate(-50%, -50%) rotate(0deg);
   }
   to {
-    transform: rotate(360deg);
+    transform: translate(-50%, -50%) rotate(360deg);
   }
 }
 
@@ -390,7 +396,6 @@ const formatTime = (time: number) => {
   height: 120px;
   border-radius: 50%;
   overflow: hidden;
-  background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -400,14 +405,31 @@ const formatTime = (time: number) => {
   font-size: 2rem;
   color: white;
   font-family: Georgia, "Times New Roman", Times, serif;
+  overflow: hidden;
+}
+
+.cover-placeholder img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 50%;
 }
 
 /* 播放控制样式 */
 .player-controls {
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   gap: 15px;
-  width: 250px;
+  width: 270px;
+  height: 60vh;
+  position: relative;
+  z-index: 100;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  padding: 1.5rem;
 }
 
 .track-info {
@@ -416,7 +438,7 @@ const formatTime = (time: number) => {
 
 .track-title {
   color: white;
-  font-size: 1.2rem;
+  font-size: 2rem;
   margin: 0 0 5px 0;
   font-weight: 600;
 }

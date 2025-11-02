@@ -124,7 +124,7 @@ const props = withDefaults(defineProps<Props>(), {
 // 当前显示的卡片索引
 const currentCardIndex = ref(0);
 // 选中的角色索引
-const selectedCharacterIndex = ref<number | null>(null);
+const selectedCharacterIndex = ref<number | null>(0);
 
 // 角色数据
 const characters = [
@@ -663,6 +663,10 @@ onMounted(() => {
   height: 100%;
   object-fit: cover;
   object-position: center;
+  transition: all 0.3s ease;
+}
+.selected-character-avatar:hover img {
+  transform: scale(1.05);
 }
 
 /* 底部基座 */

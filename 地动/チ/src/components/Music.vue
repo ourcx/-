@@ -130,8 +130,35 @@ const playlist = ref<Track[]>([
     title: "怪兽",
     artist: "鱼韵",
     src: "/audio/怪兽.mp3",
-    duration: "4:32",
+    duration: "4:49",
     durationInSeconds: 272,
+  },
+  {
+    id: 2,
+    name: "アポリア",
+    title: "アポリア",
+    artist: "ヨルシカ",
+    src: "/audio/アポリア.mp3",
+    duration: "3:50",
+    durationInSeconds: 244,
+  },
+  {
+    id: 3,
+    name: "へび",
+    title: "へび",
+    artist: "ヨルシカ",
+    src: "/audio/へび.mp3",
+    duration: "4:15",
+    durationInSeconds: 190,
+  },
+  {
+    id: 4,
+    name: "thaumazein",
+    title: "thaumazein",
+    artist: "牛尾憲輔",
+    src: "/audio/thaumazein.mp3",
+    duration: "3:05",
+    durationInSeconds: 190,
   },
 ]);
 
@@ -287,6 +314,8 @@ onMounted(() => {
   flex-direction: column;
   gap: 3rem;
   max-width: 500px;
+  position: relative;
+  z-index: 10000;
 }
 
 /* 文字动画样式 */
@@ -532,12 +561,10 @@ onMounted(() => {
 }
 /* 播放列表 */
 .playlist {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
-  border-radius: 15px;
   padding: 1.5rem;
-  border: 1px solid rgba(255, 255, 255, 0.1);
   width: 100%;
+  position: relative;
+  z-index: 1000;
 }
 
 .playlist-title {
