@@ -1,5 +1,21 @@
 <template>
   <div class="audio-player">
+    <div class="bg">
+      <Particles
+        :particle-count="200"
+        :particle-spread="10"
+        :speed="0.7"
+        :particle-colors="['#ffffff']"
+        :move-particles-on-hover="false"
+        :particle-hover-factor="1"
+        alpha-particles
+        :particle-base-size="100"
+        :size-randomness="1"
+        :camera-distance="20"
+        :disable-rotation="true"
+        class="w-full h-full"
+      />
+    </div>
     <!-- 左侧音频播放器 -->
     <div class="player-container">
       <!-- 唱片封面 -->
@@ -18,80 +34,92 @@
       </div>
 
       <!-- 播放控制 -->
-      <div class="player-controls">
-        <div class="track-info">
-          <h3 class="track-title">{{ currentTrack?.title || currentTrack?.name }}</h3>
-          <p class="track-artist">{{ currentTrack?.artist || "Unknown Artist" }}</p>
-        </div>
+      <ElectricBorder
+        :color="'#7df9ff'"
+        :speed="1"
+        :chaos="0.5"
+        :thickness="2"
+        :style="{ borderRadius: '16px' }"
+      >
+        <div class="player-controls">
+          <div class="track-info">
+            <h3 class="track-title">{{ currentTrack?.title || currentTrack?.name }}</h3>
+            <p class="track-artist">{{ currentTrack?.artist || "Unknown Artist" }}</p>
+          </div>
 
-        <div>
-          <div class="progress-container">
-            <div class="progress-bar" @click="seekAudio">
-              <div class="progress" :style="{ width: progress + '%' }"></div>
+          <div>
+            <div class="progress-container">
+              <div class="progress-bar" @click="seekAudio">
+                <div class="progress" :style="{ width: progress + '%' }"></div>
+              </div>
+              <div class="time-display">
+                <span>{{ formatTime(currentTime) }}</span>
+                <span>{{ currentTrack?.duration || "0:00" }}</span>
+              </div>
             </div>
-            <div class="time-display">
-              <span>{{ formatTime(currentTime) }}</span>
-              <span>{{ currentTrack?.duration || "0:00" }}</span>
+
+            <div class="control-buttons">
+              <button
+                class="control-btn"
+                @click="previousTrack"
+                :disabled="!canGoPrevious"
+              >
+                <svg viewBox="0 0 24 24" width="20" height="20">
+                  <path fill="currentColor" d="M6 6h2v12H6zm3.5 6l8.5 6V6z" />
+                </svg>
+              </button>
+
+              <button class="play-btn" @click="togglePlay">
+                <svg v-if="!isPlaying" viewBox="0 0 24 24" width="24" height="24">
+                  <path fill="currentColor" d="M8 5v14l11-7z" />
+                </svg>
+                <svg v-else viewBox="0 0 24 24" width="24" height="24">
+                  <path fill="currentColor" d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+                </svg>
+              </button>
+
+              <button class="control-btn" @click="nextTrack" :disabled="!canGoNext">
+                <svg viewBox="0 0 24 24" width="20" height="20">
+                  <path fill="currentColor" d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" />
+                </svg>
+              </button>
             </div>
           </div>
-
-          <div class="control-buttons">
-            <button class="control-btn" @click="previousTrack" :disabled="!canGoPrevious">
-              <svg viewBox="0 0 24 24" width="20" height="20">
-                <path fill="currentColor" d="M6 6h2v12H6zm3.5 6l8.5 6V6z" />
+          <div class="volume-control">
+            <button class="volume-btn" @click="toggleMute">
+              <svg
+                v-if="isMuted || volume === 0"
+                viewBox="0 0 24 24"
+                width="16"
+                height="16"
+              >
+                <path
+                  fill="currentColor"
+                  d="M3.63 3.63a.996.996 0 000 1.41L7.29 9H6c-1.1 0-2 .9-2 2v2c0 1.1.9 2 2 2h3.29l4.29 4.29c.63.63 1.71.18 1.71-.71v-4.17l4.18 4.18c-.49.37-1.02.68-1.6.91-.36.15-.58.53-.58.92 0 .72.73 1.18 1.39.91.8-.33 1.55-.77 2.22-1.31l1.34 1.34a.996.996 0 101.41-1.41L5.05 3.63c-.39-.39-1.02-.39-1.42 0zM18.52 15c.36-.59.67-1.22.91-1.87.18-.49.76-.69 1.18-.36.64.47 1.07 1.05 1.39 1.7.18.36.73.53 1.09.36.36-.18.53-.73.36-1.09-.42-.84-.96-1.61-1.6-2.29-.36-.4-1-.42-1.36-.06l-.05.05c-.34.34-.37.9-.08 1.29.25.41.46.85.63 1.3.15.41.47.69.9.69.08 0 .17-.01.25-.03.45-.12.78-.51.78-.98 0-.47-.33-.86-.78-.98-.33-.09-.65-.2-.95-.33-.2-.09-.34-.3-.34-.53 0-.26.19-.47.44-.51.85-.17 1.72-.25 2.56-.25.55 0 1 .45 1 1s-.45 1-1 1c-.68 0-1.35.07-2 .2-.46.09-.8.48-.8.95 0 .48.34.87.8.95.64.13 1.23.32 1.78.56z"
+                />
+              </svg>
+              <svg v-else-if="volume < 0.5" viewBox="0 0 24 24" width="16" height="16">
+                <path
+                  fill="currentColor"
+                  d="M18.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM5 9v6h4l5 5V4L9 9H5z"
+                />
+              </svg>
+              <svg v-else viewBox="0 0 24 24" width="16" height="16">
+                <path
+                  fill="currentColor"
+                  d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"
+                />
               </svg>
             </button>
-
-            <button class="play-btn" @click="togglePlay">
-              <svg v-if="!isPlaying" viewBox="0 0 24 24" width="24" height="24">
-                <path fill="currentColor" d="M8 5v14l11-7z" />
-              </svg>
-              <svg v-else viewBox="0 0 24 24" width="24" height="24">
-                <path fill="currentColor" d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
-              </svg>
-            </button>
-
-            <button class="control-btn" @click="nextTrack" :disabled="!canGoNext">
-              <svg viewBox="0 0 24 24" width="20" height="20">
-                <path fill="currentColor" d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" />
-              </svg>
-            </button>
+            <div class="volume-bar" @click="setVolume">
+              <div
+                class="volume-level"
+                :style="{ width: (isMuted ? 0 : volume) * 100 + '%' }"
+              ></div>
+            </div>
           </div>
         </div>
-        <div class="volume-control">
-          <button class="volume-btn" @click="toggleMute">
-            <svg
-              v-if="isMuted || volume === 0"
-              viewBox="0 0 24 24"
-              width="16"
-              height="16"
-            >
-              <path
-                fill="currentColor"
-                d="M3.63 3.63a.996.996 0 000 1.41L7.29 9H6c-1.1 0-2 .9-2 2v2c0 1.1.9 2 2 2h3.29l4.29 4.29c.63.63 1.71.18 1.71-.71v-4.17l4.18 4.18c-.49.37-1.02.68-1.6.91-.36.15-.58.53-.58.92 0 .72.73 1.18 1.39.91.8-.33 1.55-.77 2.22-1.31l1.34 1.34a.996.996 0 101.41-1.41L5.05 3.63c-.39-.39-1.02-.39-1.42 0zM18.52 15c.36-.59.67-1.22.91-1.87.18-.49.76-.69 1.18-.36.64.47 1.07 1.05 1.39 1.7.18.36.73.53 1.09.36.36-.18.53-.73.36-1.09-.42-.84-.96-1.61-1.6-2.29-.36-.4-1-.42-1.36-.06l-.05.05c-.34.34-.37.9-.08 1.29.25.41.46.85.63 1.3.15.41.47.69.9.69.08 0 .17-.01.25-.03.45-.12.78-.51.78-.98 0-.47-.33-.86-.78-.98-.33-.09-.65-.2-.95-.33-.2-.09-.34-.3-.34-.53 0-.26.19-.47.44-.51.85-.17 1.72-.25 2.56-.25.55 0 1 .45 1 1s-.45 1-1 1c-.68 0-1.35.07-2 .2-.46.09-.8.48-.8.95 0 .48.34.87.8.95.64.13 1.23.32 1.78.56z"
-              />
-            </svg>
-            <svg v-else-if="volume < 0.5" viewBox="0 0 24 24" width="16" height="16">
-              <path
-                fill="currentColor"
-                d="M18.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM5 9v6h4l5 5V4L9 9H5z"
-              />
-            </svg>
-            <svg v-else viewBox="0 0 24 24" width="16" height="16">
-              <path
-                fill="currentColor"
-                d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"
-              />
-            </svg>
-          </button>
-          <div class="volume-bar" @click="setVolume">
-            <div
-              class="volume-level"
-              :style="{ width: (isMuted ? 0 : volume) * 100 + '%' }"
-            ></div>
-          </div>
-        </div>
-      </div>
+      </ElectricBorder>
     </div>
   </div>
 </template>
@@ -99,7 +127,8 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, watch, computed } from "vue";
 import type { P, Track } from "../types/inte";
-
+import ElectricBorder from "../blocks/Animations/ElectricBorder/ElectricBorder.vue";
+import Particles from "../blocks/Backgrounds/Particles/Particles.vue";
 // 定义事件
 const emit = defineEmits<{
   "play-state-change": [playing: boolean];

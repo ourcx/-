@@ -44,6 +44,11 @@
         </div>
       </div>
     </div>
+    <div class="navigation-hint">
+      <div class="hint-content">
+        <div class="scroll-arrow"></div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -66,6 +71,48 @@ const text3 = `1491年，一位就读于克拉科夫大学的青年学生通过�
 </script>
 
 <style scoped>
+/* 底部导航提示 */
+.navigation-hint {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+}
+
+.hint-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
+  animation: bounce 2s infinite;
+}
+
+.scroll-arrow {
+  width: 30px;
+  height: 30px;
+  border-right: 2px solid white;
+  border-bottom: 2px solid white;
+  transform: rotate(-135deg);
+}
+
+@keyframes bounce {
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
+}
 .overlay-content {
   color: white;
   font-weight: bold;

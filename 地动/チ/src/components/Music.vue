@@ -79,7 +79,6 @@
     <!-- 底部导航提示 -->
     <div class="navigation-hint">
       <div class="hint-content">
-        <span>Scroll Down</span>
         <div class="scroll-arrow"></div>
       </div>
     </div>
