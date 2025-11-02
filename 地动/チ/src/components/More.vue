@@ -108,7 +108,7 @@ const openModal = (item: Item) => {
   margin: 0 auto;
   position: absolute;
   right: 0;
-  bottom: -8px;
+  bottom: calc(20vh - 8px);
   z-index: 10003;
 }
 
@@ -155,7 +155,7 @@ const openModal = (item: Item) => {
 
 .modal {
   width: 100%;
-  height: 80vh;
+  height: 100%;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -174,12 +174,11 @@ const openModal = (item: Item) => {
   position: relative;
   z-index: 10001;
   overflow: hidden;
-  height: 100%;
 }
 
 .modal-img-content img {
   width: 100%;
-  height: 100vh;
+  height: 80vh;
   object-fit: cover;
   transition: all 0.5s ease;
   position: relative;
@@ -188,7 +187,7 @@ const openModal = (item: Item) => {
 
 .modal-close {
   position: absolute;
-  bottom: -2vh;
+  bottom: 18vh;
   left: 0;
   width: 10vw;
   height: 5vh;
