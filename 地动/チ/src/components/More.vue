@@ -12,6 +12,7 @@
         v-for="(item, index) in items"
         :key="index"
         :style="{ '--delay': index * 0.1 + 's' }"
+        @click="openModal(item)"
       >
         <div class="more-item-overlay"></div>
         <div class="more-item-img" :style="{ '--bg-image': `url('${item.src}')` }">
@@ -27,6 +28,21 @@
       </div>
     </div>
   </section>
+  <Transition name="slide-fade">
+    <div v-if="open" class="modal">
+      <div class="modal-content"></div>
+      <div class="modal-img-content">
+        <img :src="modal.src" alt="" />
+      </div>
+      <div class="modal-text-content">
+        <div class="more-item-title">{{ modal.title }}</div>
+        <div class="more-item-desc">{{ modal.description }}</div>
+      </div>
+      <div class="modal-close" @click="open = false">返回X</div>
+      <!-- 条带 -->
+      <div class="more-item-line"></div>
+    </div>
+  </Transition>
 </template>
 
 <script setup lang="ts">
@@ -54,9 +70,130 @@ const items = ref([
     src: "https://s2.loli.net/2025/10/29/ciMaPKrukydYE2I.jpg",
   },
 ]);
+
+interface Item {
+  title: string;
+  src: string;
+  description: string;
+}
+
+const open = ref(false);
+const modal = ref<Item>({
+  title: "标题",
+  description: "这是描述",
+  src: "https://s2.loli.net/2025/10/27/t6FkDq1JQXTU7OA.jpg",
+});
+const closeModal = () => {};
+const openModal = (item: Item) => {
+  open.value = true;
+  modal.value = item;
+};
 </script>
 
 <style scoped>
+.slide-fade-enter-active {
+  transition: all 0.4s ease-out;
+}
+
+.slide-fade-leave-active {
+  transition: all 0.4s cubic-bezier(1, 0.5, 0.8, 1);
+}
+
+.slide-fade-enter-from,
+.slide-fade-leave-to {
+  transform: translateX(20px) scale(1.1);
+  opacity: 0;
+}
+.modal {
+  width: 100%;
+  height: 85vh;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  /* 黑色渐变 */
+  z-index: 100;
+}
+
+.modal-content {
+  width: 100%;
+  height: 85vh;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 1), transparent);
+  position: fixed;
+  z-index: 110;
+}
+.modal-img-content {
+  position: relative;
+  z-index: 100;
+  overflow: hidden;
+}
+.modal-img-content img {
+  width: 100%;
+  height: 100vh;
+  object-fit: cover;
+  transition: all 0.5s ease;
+  position: relative;
+  z-index: 100;
+  /* 图片向下移动 */
+}
+.modal-close {
+  position: absolute;
+  bottom: -2vh;
+  left: 0;
+  width: 10vw;
+  height: 5vh;
+  background: #ff6b6b;
+  z-index: 110;
+  text-align: center;
+  line-height: 5vh;
+  color: white;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  cursor: pointer;
+  transition: all 0.5s ease;
+}
+
+.modal-close:hover {
+  background: #4ecdc4;
+}
+
+.modal-text-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 85vh;
+  z-index: 110;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: start;
+  padding-left: 10vw;
+}
+
+.more-item-line {
+  width: 50%;
+  height: 8px;
+  background: linear-gradient(135deg, #ff6b6b, #4ecdc4, #45b7d1);
+  margin: 0 auto;
+  position: absolute;
+  right: 0;
+  bottom: -8px;
+  z-index: 110;
+}
+.more-item-line:before {
+  content: "";
+  pointer-events: none;
+  display: block;
+  width: 70%;
+  height: 8px;
+  position: absolute;
+  top: 0;
+  right: 100%;
+  background-image: linear-gradient(90deg, transparent, #ff6b6b);
+}
+
 /* .more-item-img::after {
   content: "";
   position: absolute;
@@ -292,7 +429,7 @@ const items = ref([
   margin-top: 2rem;
   margin-bottom: 2rem;
   position: absolute;
-  z-index: 300;
+  z-index: 100;
 }
 
 .more-text {
