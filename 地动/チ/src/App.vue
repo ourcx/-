@@ -16,8 +16,8 @@ const pages = {
   characters: Character,
   card: Card,
   music: Music,
-  more: More,
   end: End,
+  more: More,
 } as const;
 
 type SectionKey = keyof typeof pages;
@@ -45,8 +45,8 @@ const sections: SectionKey[] = [
   "characters",
   "card",
   "music",
-  "more",
   "end",
+  "more",
 ];
 
 onMounted(() => {
@@ -166,18 +166,18 @@ const scrollToSection = async (sectionId: SectionKey) => {
         </li>
         <li>
           <a
-            href="#more"
-            @click.prevent="scrollToSection('more')"
-            :class="{ active: currentSection === 'more' }"
-            >更多</a
-          >
-        </li>
-        <li>
-          <a
             href="#end"
             @click.prevent="scrollToSection('end')"
             :class="{ active: currentSection === 'end' }"
             >尾声</a
+          >
+        </li>
+        <li>
+          <a
+            href="#more"
+            @click.prevent="scrollToSection('more')"
+            :class="{ active: currentSection === 'more' }"
+            >更多</a
           >
         </li>
       </ul>
@@ -218,15 +218,15 @@ const scrollToSection = async (sectionId: SectionKey) => {
     ></div>
     <div
       class="scroll-dot"
-      :class="{ active: currentSection === 'more' }"
-      @click="scrollToSection('more')"
-      title="更多"
-    ></div>
-    <div
-      class="scroll-dot"
       :class="{ active: currentSection === 'end' }"
       @click="scrollToSection('end')"
       title="尾声"
+    ></div>
+    <div
+      class="scroll-dot"
+      :class="{ active: currentSection === 'more' }"
+      @click="scrollToSection('more')"
+      title="更多"
     ></div>
   </div>
 

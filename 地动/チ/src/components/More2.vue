@@ -1,57 +1,53 @@
 <template>
   <section id="more" class="more-section">
-    <div class="more-container">
+    <div class="more">
       <div class="more-line margin"></div>
       <div class="more-text margin">SFHNABB</div>
       <div class="more-date margin">
         <Date />
       </div>
-
-      <div class="more-grid">
-        <div
-          class="more-item"
-          v-for="(item, index) in items"
-          :key="index"
-          :style="{ '--delay': index * 0.1 + 's' }"
-          @click="openModal(item)"
-        >
-          <div class="more-item-img">
-            <div class="more-item-overlay"></div>
-            <div class="more-item-img" :style="{ '--bg-image': `url('${item.src}')` }">
-              <img :src="item.src" alt="" />
-              <div class="image-overlay"></div>
-            </div>
-            <div class="image-overlay"></div>
-          </div>
-          <div class="more-item-content">
-            <div class="more-item-title">{{ item.title }}</div>
-            <div class="more-item-desc">
-              <div class="text">{{ item.description }}</div>
-            </div>
+      <!-- 分成4份 -->
+      <div
+        class="more-item"
+        v-for="(item, index) in items"
+        :key="index"
+        :style="{ '--delay': index * 0.1 + 's' }"
+        @click="openModal(item)"
+      >
+        <div class="more-item-overlay"></div>
+        <div class="more-item-img" :style="{ '--bg-image': `url('${item.src}')` }">
+          <img :src="item.src" alt="" />
+          <div class="image-overlay"></div>
+        </div>
+        <div class="more-item-content">
+          <div class="more-item-title">{{ item.title }}</div>
+          <div class="more-item-desc">
+            <div class="text">{{ item.description }}</div>
           </div>
         </div>
       </div>
     </div>
-    <!-- 使用 teleport 将模态框移到 body 层级 -->
-    <teleport to="body">
-      <Transition name="slide-fade">
-        <div v-if="open" class="modal-overlay" @click.self="open = false">
-          <div class="modal">
-            <div class="modal-content"></div>
-            <div class="modal-img-content">
-              <img :src="modal.src" alt="" />
-            </div>
-            <div class="modal-text-content">
-              <div class="more-item-title">{{ modal.title }}</div>
-              <div class="more-item-desc">{{ modal.description }}</div>
-            </div>
-            <div class="modal-close" @click="open = false">返回X</div>
-            <div class="more-item-line"></div>
-          </div>
-        </div>
-      </Transition>
-    </teleport>
   </section>
+
+  <!-- 使用 teleport 将模态框移到 body 层级 -->
+  <teleport to="body">
+    <Transition name="slide-fade">
+      <div v-if="open" class="modal-overlay" @click.self="open = false">
+        <div class="modal">
+          <div class="modal-content"></div>
+          <div class="modal-img-content">
+            <img :src="modal.src" alt="" />
+          </div>
+          <div class="modal-text-content">
+            <div class="more-item-title">{{ modal.title }}</div>
+            <div class="more-item-desc">{{ modal.description }}</div>
+          </div>
+          <div class="modal-close" @click="open = false">返回X</div>
+          <div class="more-item-line"></div>
+        </div>
+      </div>
+    </Transition>
+  </teleport>
 </template>
 
 <script setup lang="ts">
@@ -101,44 +97,7 @@ const openModal = (item: Item) => {
 </script>
 
 <style scoped>
-.more-item-line {
-  width: 50%;
-  height: 8px;
-  background: linear-gradient(135deg, #ff6b6b, #4ecdc4, #45b7d1);
-  margin: 0 auto;
-  position: absolute;
-  right: 0;
-  bottom: -8px;
-  z-index: 10003;
-}
-
-.more-item-line:before {
-  content: "";
-  pointer-events: none;
-  display: block;
-  width: 70%;
-  height: 8px;
-  position: absolute;
-  top: 0;
-  right: 100%;
-  background-image: linear-gradient(90deg, transparent, #ff6b6b);
-}
-
-/* 过渡动画 */
-.slide-fade-enter-active {
-  transition: all 0.4s ease-out;
-}
-
-.slide-fade-leave-active {
-  transition: all 0.4s cubic-bezier(1, 0.5, 0.8, 1);
-}
-
-.slide-fade-enter-from,
-.slide-fade-leave-to {
-  transform: translateX(20px) scale(1.1);
-  opacity: 0;
-}
-
+/* 模态框包装器 */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -155,7 +114,7 @@ const openModal = (item: Item) => {
 
 .modal {
   width: 100%;
-  height: 80vh;
+  height: 85vh;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -164,7 +123,7 @@ const openModal = (item: Item) => {
 
 .modal-content {
   width: 100%;
-  height: 80vh;
+  height: 85vh;
   background: linear-gradient(180deg, rgba(0, 0, 0, 1), transparent);
   position: absolute;
   z-index: 10002;
@@ -212,7 +171,7 @@ const openModal = (item: Item) => {
   top: 0;
   left: 0;
   width: 100%;
-  height: 80vh;
+  height: 85vh;
   z-index: 10003;
   display: flex;
   flex-direction: column;
@@ -221,12 +180,47 @@ const openModal = (item: Item) => {
   padding-left: 10vw;
 }
 
-/* 基础布局 - 简化结构 */
+.more-item-line {
+  width: 50%;
+  height: 8px;
+  background: linear-gradient(135deg, #ff6b6b, #4ecdc4, #45b7d1);
+  margin: 0 auto;
+  position: absolute;
+  right: 0;
+  bottom: -8px;
+  z-index: 10003;
+}
+
+.more-item-line:before {
+  content: "";
+  pointer-events: none;
+  display: block;
+  width: 70%;
+  height: 8px;
+  position: absolute;
+  top: 0;
+  right: 100%;
+  background-image: linear-gradient(90deg, transparent, #ff6b6b);
+}
+
+/* 过渡动画 */
+.slide-fade-enter-active {
+  transition: all 0.4s ease-out;
+}
+
+.slide-fade-leave-active {
+  transition: all 0.4s cubic-bezier(1, 0.5, 0.8, 1);
+}
+
+.slide-fade-enter-from,
+.slide-fade-leave-to {
+  transform: translateX(20px) scale(1.1);
+  opacity: 0;
+}
+
+/* 以下是您原有的所有样式，完全保持不变 */
 .more-section {
   height: 100vh;
-  width: 100%;
-  position: relative;
-  overflow: hidden;
 }
 
 .more-item-overlay {
@@ -242,37 +236,42 @@ const openModal = (item: Item) => {
     linear-gradient(-90deg, rgba(0, 0, 0, 0.8), transparent 4rem);
 }
 
-.more-container {
+/* 四份布局 */
+.more {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   width: 100%;
-  height: 100%;
+  min-height: 100vh;
+  box-sizing: border-box;
   position: relative;
   background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
 }
 
-.more-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  width: 100%;
-  height: 100%;
-  position: relative;
-  z-index: 1;
-}
-
-/* 网格项样式 - 简化版本 */
 .more-item {
   position: relative;
-  overflow: hidden;
   background: rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+  backdrop-filter: blur(10px);
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   opacity: 0;
   transform: translateY(50px);
   animation: fadeInUp 0.8s ease forwards;
   animation-delay: var(--delay);
-  cursor: pointer;
+  box-shadow: 
+    /* 内阴影 */ inset 0 8px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -5px 5px rgba(0, 0, 0, 0.5),
+    /* 外阴影 - 多层实现深度感 */ 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 10px 15px -10px rgba(0, 0, 0, 0.5), 0 25px 50px -12px rgba(0, 0, 0, 0.25),
+    /* 发光边框效果 */ 0 0 0 1px rgba(255, 255, 255, 0.2);
 }
 
 .more-item:hover {
   transform: translateY(-10px) scale(1.02);
+  /* 悬停时的增强阴影 */
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), inset 0 -1px 0 rgba(0, 0, 0, 0.5),
+    0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 40px 50px -12px rgba(0, 0, 0, 0.4),
+    0 60px 70px -20px rgba(0, 0, 0, 0.5),
+    /* 悬停发光效果 */ 0 0 20px rgba(78, 205, 196, 0.3), 0 0 0 1px rgba(78, 205, 196, 0.2);
 }
 
 .more-item-img {
@@ -280,6 +279,7 @@ const openModal = (item: Item) => {
   width: 100%;
   height: 100%;
   overflow: hidden;
+  transition: all 0.5s ease;
 }
 
 .more-item-img img {
@@ -287,6 +287,7 @@ const openModal = (item: Item) => {
   height: 100%;
   object-fit: cover;
   transition: transform 0.5s ease;
+  will-change: transform;
 }
 
 .more-item-img::before {
@@ -340,8 +341,9 @@ const openModal = (item: Item) => {
   background: linear-gradient(
     to bottom,
     transparent 0%,
+    rgba(0, 0, 0, 0.1) 30%,
     rgba(0, 0, 0, 0.3) 70%,
-    rgba(0, 0, 0, 0.7) 100%
+    rgba(0, 0, 0, 0.5) 100%
   );
   opacity: 0.6;
   transition: opacity 0.3s ease;
@@ -355,8 +357,8 @@ const openModal = (item: Item) => {
   position: absolute;
   width: 100%;
   bottom: 0;
+  z-index: 200;
   padding-bottom: 10rem;
-  z-index: 100;
 }
 
 .more-item-title {
@@ -365,7 +367,7 @@ const openModal = (item: Item) => {
   color: white;
   margin-bottom: 1rem;
   font-family: Georgia, "Times New Roman", Times, serif;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .more-item-desc {
@@ -388,8 +390,8 @@ const openModal = (item: Item) => {
   position: absolute;
   bottom: -10px;
   left: 0;
-  height: 3px;
-  width: 50px;
+  height: 5px;
+  width: 30%;
   background: linear-gradient(45deg, #4ecdc4, #ff6b6b);
 }
 
@@ -411,6 +413,7 @@ const openModal = (item: Item) => {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
 }
+
 /* 动画效果 */
 @keyframes fadeInUp {
   from {
@@ -423,7 +426,6 @@ const openModal = (item: Item) => {
   }
 }
 
-/* 装饰元素 */
 .more-line {
   width: 100%;
   height: 1px;
@@ -436,7 +438,7 @@ const openModal = (item: Item) => {
   margin-top: 2rem;
   margin-bottom: 2rem;
   position: absolute;
-  z-index: 10;
+  z-index: 100;
 }
 
 .more-text {
@@ -445,28 +447,26 @@ const openModal = (item: Item) => {
   font-size: 5rem;
   bottom: 5.9rem;
   left: 10%;
-  font-family: Georgia, "Times New Roman", Times, serif;
 }
 
 .more-date {
   height: 3rem;
   bottom: 4rem;
   right: 10%;
-  color: rgba(255, 255, 255, 0.7);
 }
 
 /* 响应式设计 */
 @media (min-width: 1024px) {
-  .more-grid {
+  .more {
     grid-template-columns: repeat(4, 1fr);
   }
 }
 
 @media (max-width: 768px) {
-  .more-grid {
+  .more {
     grid-template-columns: 1fr;
-    gap: 1rem;
-    padding: 1rem;
+    gap: 1.5rem;
+    padding: 3rem 1rem;
   }
 
   .more-item-img {
@@ -480,20 +480,11 @@ const openModal = (item: Item) => {
   .more-item-title {
     font-size: 1.3rem;
   }
-
-  .more-text {
-    font-size: 3rem;
-    left: 5%;
-  }
-
-  .more-date {
-    right: 5%;
-  }
 }
 
 @media (max-width: 480px) {
-  .more-grid {
-    padding: 0.5rem;
+  .more {
+    padding: 2rem 1rem;
   }
 
   .more-item-img {
@@ -511,12 +502,9 @@ const openModal = (item: Item) => {
   .more-item-desc {
     font-size: 0.9rem;
   }
-
-  .more-text {
-    font-size: 2rem;
-  }
 }
 
+/* 额外的装饰效果 */
 .more::before {
   content: "";
   position: absolute;
