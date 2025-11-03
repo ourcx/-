@@ -1,5 +1,22 @@
 <template>
   <section id="home" class="hero-section" :class="{ active: currentSection === 'home' }">
+    <Crosshair :container-ref="containerElement" color="#ffffff" />
+    <div class="bg">
+      <Particles
+        :particle-count="200"
+        :particle-spread="10"
+        :speed="0.2"
+        :particle-colors="['#ffffff']"
+        :move-particles-on-hover="false"
+        :particle-hover-factor="1"
+        alpha-particles
+        :particle-base-size="100"
+        :size-randomness="1"
+        :camera-distance="20"
+        :disable-rotation="true"
+        class="w-full h-full"
+      />
+    </div>
     <div class="logo-container">
       <div class="logo vue">
         <div class="text-logo">
@@ -102,7 +119,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed, useTemplateRef } from "vue";
+import Particles from "../blocks/Backgrounds/Particles/Particles.vue";
+import Crosshair from "../blocks/Animations/Crosshair/Crosshair.vue";
 interface Props {
   currentSection?: string;
   scrollToSection?: (section: string) => void;
@@ -116,7 +135,8 @@ withDefaults(defineProps<Props>(), {
   anime: {},
   scrollToNextSection: () => {},
 });
-
+const containerRef = useTemplateRef<HTMLDivElement>("containerRef");
+const containerElement = computed(() => containerRef.value);
 const pathLength = ref(0);
 const dotGradient1 = ref(false);
 onMounted(() => {
