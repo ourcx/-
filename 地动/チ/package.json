@@ -9,9 +9,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "connect-history-api-fallback": "^2.0.0",
+    "express": "^5.1.0",
     "gsap": "^3.13.0",
+    "http-proxy-middleware": "^3.0.5",
     "motion-v": "^1.7.4",
     "ogl": "^1.0.11",
+    "three": "^0.181.2",
     "vue": "^3.5.22",
     "vue-audio-wave-zy": "^1.0.0",
     "vue-router": "^4.6.3",

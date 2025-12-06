@@ -98,7 +98,7 @@
 //@ts-ignore
 import type { Track } from "../types/inte";
 import Wavesurfer from "./Wavesurfer.vue";
-import { ref, onMounted, onUnmounted, computed } from "vue";
+import { ref, onMounted, computed } from "vue";
 const isPlaying = ref(false);
 const currentTrackIndex = ref(0);
 const wavesurferRef = ref();
@@ -106,6 +106,7 @@ const particleCount = 30;
 const currentTrackTimes = ref<number[]>([]);
 // 粒子样式
 const particleStyle = (index: number) => {
+  console.log(index);
   const size = Math.random() * 4 + 1;
   const duration = Math.random() * 20 + 10;
   const delay = Math.random() * 5;
@@ -197,13 +198,6 @@ const handleTimeUpdate = (data: { trackId: number; currentTime: number }) => {
   if (index !== -1) {
     currentTrackTimes.value[index] = data.currentTime;
   }
-};
-
-// 格式化时间
-const formatTime = (seconds: number) => {
-  const mins = Math.floor(seconds / 60);
-  const secs = Math.floor(seconds % 60);
-  return `${mins}:${secs.toString().padStart(2, "0")}`;
 };
 
 onMounted(() => {

@@ -73,7 +73,7 @@ interface Anime {
   scrollToNextSection?: any;
 }
 
-const props = withDefaults(defineProps<Anime>(), {
+withDefaults(defineProps<Anime>(), {
   currentSection: "about",
   anime: {},
   scrollToSection: () => {},

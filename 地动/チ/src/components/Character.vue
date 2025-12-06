@@ -116,7 +116,7 @@ interface Props {
   scrollToPrevSection: () => void;
 }
 
-const props = withDefaults(defineProps<Props>(), {
+ withDefaults(defineProps<Props>(), {
   currentSection: "characters",
   scrollToPrevSection: () => {},
 });

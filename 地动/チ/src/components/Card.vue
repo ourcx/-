@@ -41,14 +41,14 @@
 
 <script setup lang="ts">
 import Canvas from "./Canvas.vue";
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref } from "vue";
 
 interface Props {
   currentSection: string;
   scrollToPrevSection: () => void;
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
   currentSection: "characters",
   scrollToPrevSection: () => {},
 });

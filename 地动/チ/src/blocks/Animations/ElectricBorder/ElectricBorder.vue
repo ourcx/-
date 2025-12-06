@@ -58,14 +58,14 @@ const updateAnim = () => {
 
   const dyAnims = Array.from(svg.querySelectorAll('feOffset > animate[attributeName="dy"]')) as SVGAnimateElement[];
   if (dyAnims.length >= 2) {
-    dyAnims[0].setAttribute('values', `${height}; 0`);
-    dyAnims[1].setAttribute('values', `0; -${height}`);
+    dyAnims[0]!.setAttribute('values', `${height}; 0`);
+    dyAnims[1]!.setAttribute('values', `0; -${height}`);
   }
 
   const dxAnims = Array.from(svg.querySelectorAll('feOffset > animate[attributeName="dx"]')) as SVGAnimateElement[];
   if (dxAnims.length >= 2) {
-    dxAnims[0].setAttribute('values', `${width}; 0`);
-    dxAnims[1].setAttribute('values', `0; -${width}`);
+    dxAnims[0]!.setAttribute('values', `${width}; 0`);
+    dxAnims[1]!.setAttribute('values', `0; -${width}`);
   }
 
   const baseDur = 6;

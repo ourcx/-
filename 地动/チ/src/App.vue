@@ -8,6 +8,7 @@ import Card from "./components/Card.vue";
 import Music from "./components/Music.vue";
 import More from "./components/More.vue";
 import End from "./components/End.vue";
+import World from "./components/World.vue";
 
 // create a plain const pages object and derive the SectionKey type from it
 const pages = {
@@ -18,6 +19,7 @@ const pages = {
   music: Music,
   end: End,
   more: More,
+  world: World,
 } as const;
 
 type SectionKey = keyof typeof pages;
@@ -46,6 +48,7 @@ const sections: SectionKey[] = [
   "card",
   "music",
   "end",
+  "world",
   "more",
 ];
 
@@ -180,6 +183,14 @@ const scrollToSection = async (sectionId: SectionKey) => {
             >更多</a
           >
         </li>
+        <li>
+          <a
+            href="#world"
+            @click.prevent="scrollToSection('world')"
+            :class="{ active: currentSection === 'world' }"
+            >世界</a
+          >
+        </li>
       </ul>
     </div>
   </nav>
@@ -227,6 +238,12 @@ const scrollToSection = async (sectionId: SectionKey) => {
       :class="{ active: currentSection === 'more' }"
       @click="scrollToSection('more')"
       title="更多"
+    ></div>
+    <div
+      class="scroll-dot"
+      :class="{ active: currentSection === 'world' }"
+      @click="scrollToSection('world')"
+      title="世界"
     ></div>
   </div>
 

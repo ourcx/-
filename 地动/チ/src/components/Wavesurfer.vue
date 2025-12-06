@@ -143,7 +143,6 @@ const currentTime = ref(0);
 const duration = ref(0);
 const progress = ref(0);
 const volume = ref(0.7);
-const isLoading = ref(false);
 const props = defineProps<P & { isPlaying?: boolean }>();
 
 // 计算属性

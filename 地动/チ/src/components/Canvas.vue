@@ -4,19 +4,13 @@
       <canvas ref="canvas" width="400" height="400"></canvas>
     </div>
     <div class="upload-container">
-      <input
-        type="file"
-        ref="fileInput"
-        accept="image/*"
-        @change="handleFileUpload"
-        style="display: none"
-      />
+      <input type="file" ref="fileInput" accept="image/*" @change="handleFileUpload" style="display: none" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, watch } from "vue";
+import { ref, onMounted, watch, onUnmounted } from "vue";
 
 // 定义props接收父组件传入的图片数据
 interface LogoItem {
@@ -45,7 +39,7 @@ const fileInput = ref<HTMLInputElement | null>(null);
 let context = ref<CanvasRenderingContext2D | null>(null);
 
 /** canvas实体对象 */
-let particleCanvas = ref<ParticleCanvas>();
+let particleCanvas = ref<ParticleCanvas | null>();
 
 // 设置画布大小
 const width = 400,
@@ -331,6 +325,15 @@ onMounted(() => {
     particleCanvas.value.drawCanvas();
   }
 });
+
+
+//清理画布
+onUnmounted(() => {
+  particleCanvas.value = null;
+  context.value = null;
+  canvas.value = null;
+  
+})
 </script>
 
 <style lang="scss" scoped>
@@ -340,10 +343,12 @@ onMounted(() => {
   flex-direction: column;
   align-items: center;
 }
+
 .canvas-container {
   margin-top: 15px;
   display: flex;
   height: 400px;
+
   canvas {
     margin: auto;
   }
@@ -369,9 +374,11 @@ onMounted(() => {
   z-index: 2;
   pointer-events: none;
 }
+
 #pointer.hidden {
   opacity: 0;
 }
+
 #pointer.hover {
   width: 24px;
   height: 24px;
@@ -391,14 +398,17 @@ onMounted(() => {
   z-index: 1;
   pointer-events: none;
 }
+
 @keyframes effect {
   0% {
     transform: translate3d(-50%, -50%, 0px) scale(0.1);
     opacity: 1;
   }
+
   30% {
     opacity: 0.6;
   }
+
   100% {
     transform: translate3d(-50%, -50%, 0px) scale(1);
     opacity: 0;
